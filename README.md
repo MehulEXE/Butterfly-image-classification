@@ -195,6 +195,48 @@ CNNs like EfficientNet rely on **local receptive fields** — they build up feat
 
 ---
 
+## 🔍 Known Limitations & Areas of Improvement
+
+While this project achieves strong results, there are several areas I recognise for future improvement:
+
+### 1. ⚖️ Fairer Model Comparison
+The EfficientNet B0 base was **completely frozen**, which made the comparison against a fully fine-tuned Swin Transformer unfair. A more rigorous experiment would be to:
+- Fine-tune EfficientNet B0 end-to-end with the same augmentation pipeline.
+- Perform **partial unfreezing** (e.g., unfreeze the last 20–50 layers) to find the sweet spot.
+- Use the same optimizer (AdamW) and scheduler (CosineAnnealing) for both models.
+
+### 2. 📊 Deeper Evaluation Metrics
+Currently, the primary metric is **accuracy**. For a 75-class problem, additional metrics would give a more complete picture:
+- **Confusion Matrix** — to identify which species are commonly confused with each other.
+- **Per-class Precision, Recall, and F1-Score** — to detect underperforming classes.
+- **Top-5 Accuracy** — useful since some species are visually almost identical.
+
+### 3. 🚀 Model Deployment
+The model currently runs only in a Jupyter Notebook. Future work includes:
+- Building a **Gradio** or **Streamlit** web app for real-time butterfly classification.
+- Deploying on **Hugging Face Spaces** for a shareable demo link.
+- Exporting the model to **ONNX** format for optimised inference.
+
+### 4. 🔬 Experiment Tracking
+No experiment tracking tool (e.g., **MLflow**, **Weights & Biases**) was used. Adding one would help:
+- Log hyperparameters, metrics, and artefacts systematically.
+- Compare runs side-by-side when testing different configurations.
+- Reproduce results reliably.
+
+### 5. 🧪 Additional Experiments to Try
+- **Larger Swin variants** (`swin_small`, `swin_base`) — potentially higher accuracy but more compute.
+- **Label Smoothing** — the `timm` library provides `LabelSmoothingCrossEntropy`, which was imported but not used in the final training.
+- **MixUp / CutMix augmentation** — proven to improve generalisation on fine-grained tasks.
+- **Test-Time Augmentation (TTA)** — average predictions over multiple augmented versions of the same image at inference.
+- **Learning Rate Warm-up** — gradually increase LR for the first few epochs to stabilise early training.
+
+### 6. 🗂️ Code Organisation
+- Refactor notebook code into modular `.py` scripts (`dataset.py`, `model.py`, `train.py`, `evaluate.py`).
+- Add **command-line arguments** for hyperparameters using `argparse`.
+- Write **unit tests** for the dataset class and data transforms.
+
+---
+
 ## 🏁 Conclusion
 
 - The **Swin Transformer** (`swin_tiny_patch4_window7_224`) achieved **94.85% validation accuracy** on the butterfly classification task, demonstrating that Vision Transformers with proper fine-tuning are highly effective for fine-grained image recognition.
@@ -203,6 +245,28 @@ CNNs like EfficientNet rely on **local receptive fields** — they build up feat
 
 ---
 
-> 📓 *For full code and execution details, please refer to the provided `.ipynb` notebooks:*
-> - `swin-transformer.ipynb` — Swin Transformer (primary model)
-> - `efficientnet-b0-7 .ipynb` — EfficientNet B0 (baseline comparison)
+## 🛠️ Getting Started
+
+### Prerequisites
+- Python 3.10+
+- CUDA-enabled GPU (recommended for training)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/butterfly-image-classification.git
+cd butterfly-image-classification
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### Run the Notebooks
+Open the `.ipynb` files in Jupyter Notebook or Kaggle:
+- `swin-transformer.ipynb` — Swin Transformer (primary model)
+- `efficientnet-b0-7 .ipynb` — EfficientNet B0 (baseline comparison)
+
+---
+
+> 📓 *For full code and execution details, please refer to the provided `.ipynb` notebooks.*
